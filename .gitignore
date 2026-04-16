@@ -1,0 +1,16 @@
+# Virtual environment — never commit this (huge folder)
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# API keys and secrets — NEVER commit
+.env
+
+# Mac system file
+.DS_Store
+
+# VS Code settings
+.vscode/
