@@ -11,9 +11,10 @@ def clean_data(df):
 def basic_stats(df):
     stats= df.describe()  # Get basic statistics
     st.dataframe(stats)  # Display it
+    st.write("Correlation Matrix:\n", df.select_dtypes(include=[np.number]).corr())  # Get correlation matrix
     return stats
 def dataset_info(df):
     st.write("Basic Information about the dataset:", df.info())  # Get dataset info
     st.write("Dataset Shape:", df.shape)  # Get dataset shape
     st.write("Missing Values in each column:\n", df.isnull().sum())  # Get missing values count
-    st.write("Correlation Matrix:\n", df.corr())  # Get correlation matrix
+    

@@ -11,4 +11,9 @@ if df is not None:           # Only runs if df has data
 else:
     st.write("Please upload a CSV or Excel file")  # Show message if nothing uploaded
 if df is not None:
+    st.write("Dataset Information:")
+    dataset_info(df)
     df_cleaned=clean_data(df)
+if df_cleaned is not None:
+    st.write("Basic Statistics:")
+    basic_stats(df_cleaned)
