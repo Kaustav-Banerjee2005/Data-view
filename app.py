@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from loader import load_data
 from stats import clean_data, basic_stats, dataset_info
+df_cleaned=None
 st.title("Data Viewer App")
 data=st.file_uploader("Upload your data",type=["csv","xlsx","xls"])
 df=load_data(data)
