@@ -10,4 +10,5 @@ if df is not None:           # Only runs if df has data
     st.dataframe(df.head(10))
 else:
     st.write("Please upload a CSV or Excel file")  # Show message if nothing uploaded
-df_cleaned=clean_data(df)
+if df is not None:
+    df_cleaned=clean_data(df)

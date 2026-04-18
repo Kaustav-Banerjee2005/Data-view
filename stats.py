@@ -8,10 +8,10 @@ def clean_data(df):
         df_cleaned = df_cleaned.drop_duplicates()  # Remove duplicate rows
         st.dataframe(df_cleaned)  # Display the cleaned data
         return df_cleaned
-    def basic_stats(df):
-        stats= df.describe()  # Get basic statistics
-        st.dataframe(stats)  # Display it
-        return stats
+def basic_stats(df):
+    stats= df.describe()  # Get basic statistics
+    st.dataframe(stats)  # Display it
+    return stats
 def dataset_info(df):
     st.write("Basic Information about the dataset:", df.info())  # Get dataset info
     st.write("Dataset Shape:", df.shape)  # Get dataset shape
