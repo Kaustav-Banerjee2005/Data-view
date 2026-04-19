@@ -11,13 +11,19 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 if 'df_cleaned' not in st.session_state:
     st.session_state.df_cleaned = None
+if 'uploaded_file_key' not in st.session_state:
+    st.session_state.uploaded_file_key = None
 
 page=st.sidebar.selectbox("Select a page", ["Basic Analysis","Charts and Visualizations"])
 
 # File uploader in sidebar (available on all pages)
 data=st.sidebar.file_uploader("Upload your data",type=["csv","xlsx","xls"])
 if data is not None:
-    st.session_state.df = load_data(data)
+    current_file_key = (data.name, data.size)
+    if st.session_state.uploaded_file_key != current_file_key:
+        st.session_state.df = load_data(data)
+        st.session_state.df_cleaned = None
+        st.session_state.uploaded_file_key = current_file_key
 
 if page=="Basic Analysis":
     if st.session_state.df is not None:
@@ -27,9 +33,12 @@ if page=="Basic Analysis":
     if st.session_state.df is not None:
         st.write("Dataset Information:")
         dataset_info(st.session_state.df)
-        st.session_state.df_cleaned = clean_data(st.session_state.df)
+        if st.button("Clean data", key="clean_data_btn"):
+            st.session_state.df_cleaned = clean_data(st.session_state.df)
     
     if st.session_state.df_cleaned is not None:
+        st.write("Cleaned Data:")
+        st.dataframe(st.session_state.df_cleaned)
         st.write("Basic Statistics:")
         basic_stats(st.session_state.df_cleaned)
 
