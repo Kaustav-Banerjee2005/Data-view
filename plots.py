@@ -24,7 +24,7 @@ def create_visualization(df):
 
     chart_type = st.selectbox(
         "Select Chart Type",
-        ["Bar Chart", "Pie Chart", "Histogram"],
+        ["Bar Chart", "Pie Chart", "Histogram","Box Plot","Count Plot"],
         key="chart_type",
     )
 
@@ -101,6 +101,28 @@ def create_visualization(df):
 
         if st.button("Generate Histogram", key="hist_btn"):
             fig = px.histogram(df, x=column, nbins=bins,marginal="box", title=f"Distribution of {column}")
+            fig.update_layout(xaxis_title=column, yaxis_title="Count")
+            st.plotly_chart(fig, use_container_width=True)
+    elif chart_type == "Box Plot":
+        if not numeric_cols:
+            st.error("Box plot requires at least one numeric column.")
+            return
+
+        column = st.selectbox("Select Column", numeric_cols, key="box_col")
+
+        if st.button("Generate Box Plot", key="box_btn"):
+            fig = px.box(df, y=column, title=f"Box Plot of {column}")
+            fig.update_layout(yaxis_title=column)
+            st.plotly_chart(fig, use_container_width=True)
+    elif chart_type == "Count Plot":
+        if not categorical_cols:
+            st.error("Count plot requires at least one categorical column.")
+            return
+
+        column = st.selectbox("Select Column", categorical_cols, key="count_col")
+
+        if st.button("Generate Count Plot", key="count_btn"):
+            fig = px.histogram(df, x=column, title=f"Count Plot of {column}")
             fig.update_layout(xaxis_title=column, yaxis_title="Count")
             st.plotly_chart(fig, use_container_width=True)
 
