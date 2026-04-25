@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
 
 
 @st.cache_data
@@ -49,13 +50,11 @@ def create_visualization(df):
             y_axis = st.selectbox("Select Y-axis (Value)", numeric_cols, key="bar_y")
 
         if st.button("Generate Bar Chart", key="bar_btn"):
-            fig, ax = plt.subplots(figsize=(10, 5))
-            df.groupby(x_axis)[y_axis].sum().plot(kind="bar", ax=ax, color="skyblue")
-            ax.set_title(f"{y_axis} by {x_axis}")
-            ax.set_xlabel(x_axis)
-            ax.set_ylabel(y_axis)
-            plt.xticks(rotation=45)
-            st.pyplot(fig, use_container_width=True)
+            
+            grouped_df=df.groupby(x_axis)[y_axis].sum().reset_index()
+            fig = px.bar(grouped_df, x=x_axis, y=y_axis, color=x_axis, title=f"{y_axis} by {x_axis}")
+            fig.update_layout(xaxis_title=x_axis, yaxis_title=y_axis)
+            st.plotly_chart(fig, use_container_width=True)
 
     elif chart_type == "Pie Chart":
         if not categorical_cols:
@@ -70,19 +69,27 @@ def create_visualization(df):
         num_col = st.selectbox("Select Value Column", numeric_cols, key="pie_val")
 
         if st.button("Generate Pie Chart", key="pie_btn"):
-            pie_data = df.groupby(cat_col)[num_col].sum()
-            pie_data = pie_data[pie_data > 0]
+
+            pie_data = df.groupby(cat_col)[num_col].sum().reset_index()
+
+            # Filter positive values
+            pie_data = pie_data[pie_data[num_col] > 0]
 
             if pie_data.empty:
                 st.error("No positive values available for pie chart")
+
             else:
                 if len(pie_data) > 6:
                     st.warning("Too many categories. Pie chart may not be readable (recommended <= 6)")
 
-                fig, ax = plt.subplots(figsize=(8, 8))
-                ax.pie(pie_data, labels=pie_data.index, autopct="%1.1f%%")
-                ax.set_title(f"{num_col} distribution by {cat_col}")
-                st.pyplot(fig, use_container_width=True)
+                fig = px.pie(
+                    pie_data,
+                    names=cat_col,
+                    values=num_col,
+                    title=f"{num_col} distribution by {cat_col}"
+                )
+
+                st.plotly_chart(fig, use_container_width=True)
 
     elif chart_type == "Histogram":
         if not numeric_cols:
@@ -93,11 +100,8 @@ def create_visualization(df):
         bins = st.slider("Number of Bins", min_value=5, max_value=50, value=20, key="hist_bins")
 
         if st.button("Generate Histogram", key="hist_btn"):
-            fig, ax = plt.subplots(figsize=(10, 5))
-            ax.hist(df[column], bins=bins, color="green", edgecolor="black")
-            ax.set_title(f"Distribution of {column}")
-            ax.set_xlabel(column)
-            ax.set_ylabel("Frequency")
-            st.pyplot(fig, use_container_width=True)
+            fig = px.histogram(df, x=column, nbins=bins,marginal="box", title=f"Distribution of {column}")
+            fig.update_layout(xaxis_title=column, yaxis_title="Count")
+            st.plotly_chart(fig, use_container_width=True)
 
  
