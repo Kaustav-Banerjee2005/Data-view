@@ -4,7 +4,7 @@ import numpy as np
 from loader import load_data
 from stats import clean_data, basic_stats, dataset_info
 from eda import get_heatmap_figure,detect_outliers_iqr
-
+from deep_dive import deep_dive_analysis
 
 st.title("Data Viewer App")
 
@@ -15,8 +15,14 @@ if 'df_cleaned' not in st.session_state:
     st.session_state.df_cleaned = None
 if 'uploaded_file_key' not in st.session_state:
     st.session_state.uploaded_file_key = None
+if 'show_heatmap' not in st.session_state:
+    st.session_state.show_heatmap = False
+if 'show_outliers' not in st.session_state:
+    st.session_state.show_outliers = False
+if 'show_deep_dive' not in st.session_state:
+    st.session_state.show_deep_dive = False
 
-page=st.sidebar.selectbox("Select a page", ["Basic Cleaning","Charts and Visualizations","EDA"])
+page=st.sidebar.selectbox("Select a page", ["Basic Cleaning","Charts and Visualizations","EDA","Deep Dive Analysis"])
 
 # File uploader in sidebar (available on all pages)
 data=st.sidebar.file_uploader("Upload your data",type=["csv","xlsx","xls"])
@@ -55,13 +61,20 @@ elif page=="EDA":
     st.title("Exploratory Data Analysis (EDA)")
     st.write("In this page you can plot heatmap and find out outliers in your Dataset using the IQR method")
     if st.session_state.df is not None:
-        if st.button("Show Heatmap"):
+        if st.button("Show Heatmap", key="heatmap_btn"):
+            st.session_state.show_heatmap = not st.session_state.show_heatmap
+        
+        if st.session_state.show_heatmap:
             fig, error = get_heatmap_figure(st.session_state.df)
             if error:
                 st.error(error)
             else:
                 st.plotly_chart(fig, use_container_width=True)
-        if st.button("Detect Outliers (IQR)"):
+        
+        if st.button("Detect Outliers (IQR)", key="outliers_btn"):
+            st.session_state.show_outliers = not st.session_state.show_outliers
+        
+        if st.session_state.show_outliers:
             outliers = detect_outliers_iqr(st.session_state.df)
             # Create a structured summary table
             outlier_summary = []
@@ -91,3 +104,12 @@ elif page=="EDA":
                         st.info("No outliers detected in this column")
     else:
         st.write("Please upload data first on the Basic Analysis page")
+
+elif page=="Deep Dive Analysis":
+    st.title("Deep Dive Analysis")
+    st.write("In page you can slect a particular column from the dataset and do a in depth analysis of that column")
+    if st.session_state.df is not None:
+        deep_dive_analysis(st.session_state.df)
+    else:
+        st.write("Please upload data first on the Basic Analysis page")
+
