@@ -225,10 +225,17 @@ def categorical_deep_dive(df, column):
             y='Count',
             title=f"Value Counts of {column} (Top 15)",
             labels={'Count': 'Frequency'},
-            color='Count',
-            color_continuous_scale='Blues'
+            color_discrete_sequence=['#2E86AB', '#A23B72', '#F18F01', '#C73E1D', '#6A994E']
         )
-        fig_bar.update_layout(height=400)
+        fig_bar.update_layout(
+            height=400,
+            font=dict(size=12),
+            hovermode='x unified',
+            plot_bgcolor='rgba(240, 240, 245, 0.5)',
+            xaxis_title=column,
+            yaxis_title='Frequency'
+        )
+        fig_bar.update_traces(marker=dict(line=dict(width=0.5, color='white')))
         st.plotly_chart(fig_bar, use_container_width=True)
     
     with col2:
@@ -248,11 +255,11 @@ def categorical_deep_dive(df, column):
     # ===== VARIETY & DOMINANCE =====
     st.header("🔍 Variety & Dominance")
     
-    most_freq_cat = value_counts.index[0]
+    most_freq_cat = str(value_counts.index[0])
     most_freq_count = value_counts.iloc[0]
     most_freq_pct = (most_freq_count / len(df)) * 100
     
-    least_freq_cat = value_counts.index[-1]
+    least_freq_cat = str(value_counts.index[-1])
     least_freq_count = value_counts.iloc[-1]
     least_freq_pct = (least_freq_count / len(df)) * 100
     
