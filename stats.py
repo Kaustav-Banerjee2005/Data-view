@@ -10,9 +10,23 @@ def clean_data(df):
 
 
 def basic_stats(df):
-    stats = df.describe()
-    st.dataframe(stats)
-    st.write("Correlation Matrix:\n", df.select_dtypes(include=[np.number]).corr())
+    num_df = df.select_dtypes(include="number")
+    stats = pd.DataFrame({
+        "mean":     num_df.mean(),
+        "median":   num_df.median(),
+        "std":      num_df.std(),
+        "skewness": num_df.skew(),     # skewness is a measure of asymmetry in the distribution
+        "kurtosis": num_df.kurt(),     # kurtosis measures the "tailedness" of the distribution (higher kurtosis means more outliers)
+    })
+
+    # Interpret skewness for the user
+    def skew_label(s):
+        if s > 1:   return "Highly right-skewed"
+        elif s > 0.5: return "Moderately right-skewed"
+        elif s < -1: return "Highly left-skewed"
+        else:        return "Approximately normal"
+
+    stats["skew_label"] = stats["skewness"].apply(skew_label)
     return stats
 
 
